@@ -6,7 +6,7 @@ import { ArrowRight, Instagram, Facebook, Phone } from "lucide-react";
 export default function Home() {
     return (
         <main className="relative min-h-screen overflow-hidden">
-            <section className="relative py-20 overflow-hidden xl:py-16">
+            <section className="relative pt-8 pb-16 overflow-hidden xl:pb-16">
                 <div className="relative z-10 grid items-center max-w-screen-3xl px-5 gap-8 mx-auto sm:px-6 xl:px-8 xl:grid-cols-2 xl:gap-0">
                     {/* Left Content */}
                     <div className="flex flex-col items-center max-w-2xl mx-auto xl:items-start">
@@ -49,7 +49,7 @@ export default function Home() {
                             <img    
                                 src="/WORK.webp"
                                 alt="Elegant woman wearing gold jewelry"
-                                className="object-cover object-center w-full h-[600px] md:h-[700px] xl:h-[600px] rounded-2xl"
+                                className="object-cover object-center w-full h-[600px] md:h-[700px] xl:h-[550px] rounded-2xl"
                             />
                         </div>
                     </div>
