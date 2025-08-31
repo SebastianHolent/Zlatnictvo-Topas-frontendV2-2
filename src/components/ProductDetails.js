@@ -1,14 +1,11 @@
-"use client";
-
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { sdk } from "@/lib/sdk";
 import { useCart } from "@/context/CartContext";
 
 export default function ProductDetails({ product, onAddToCart }) {
   const DPH = 1.23;
   const { cart, refreshCart } = useCart();
-
-  const [quantity, setQuantity] = useState(1);
+  const [isInCart, setInCart] = useState(false);
 
   // ---- Length selection ----
   const [isLengthOpen, setLengthOpen] = useState(false);
@@ -53,20 +50,12 @@ export default function ProductDetails({ product, onAddToCart }) {
   const selectedVariant = getCorrectVariant(product);
   const availableQty = selectedVariant?.inventory_quantity ?? 0;
 
-  // ✅ Check how many of this variant are already in the cart
-  const inCartQty =
-    cart?.items?.find((item) => item.variant_id === selectedVariant?.id)
-      ?.quantity || 0;
-
-  // ✅ True available stock = total stock - already in cart
-  const effectiveAvailableQty = Math.max(availableQty - inCartQty, 0);
-
-  // ✅ Auto-correct quantity if user has more than allowed
+  // ✅ Check if the variant is already in cart
   useEffect(() => {
-    if (quantity > effectiveAvailableQty) {
-      setQuantity(effectiveAvailableQty > 0 ? effectiveAvailableQty : 1);
-    }
-  }, [effectiveAvailableQty]);
+    if (!cart || !selectedVariant) return;
+    const inCart = cart.items.some((item) => item.variant_id === selectedVariant.id);
+    setInCart(inCart);
+  }, [cart, selectedVariant]);
 
   async function ensureCartId() {
     let cartId = localStorage.getItem("cart_id");
@@ -84,7 +73,7 @@ export default function ProductDetails({ product, onAddToCart }) {
       const cartId = await ensureCartId();
       await sdk.store.cart.createLineItem(cartId, {
         variant_id: selectedVariant.id,
-        quantity,
+        quantity: 1,
       });
 
       await refreshCart();
@@ -112,39 +101,6 @@ export default function ProductDetails({ product, onAddToCart }) {
           €
         </p>
       </div>
-
-      {/* Quantity */}
-      {effectiveAvailableQty > 0 ? (
-        <div className="mt-6">
-          <label className="font-medium block mb-1">Množstvo:</label>
-          <input
-            className="border border-gray-300 w-24 px-3 py-2 rounded"
-            type="number"
-            min="1"
-            max={effectiveAvailableQty}
-            step="1"
-            value={quantity}
-            onChange={(e) =>
-              setQuantity(
-                Math.min(
-                  effectiveAvailableQty,
-                  Math.max(1, Number(e.target.value))
-                )
-              )
-            }
-          />
-          <p className="mt-1 text-sm text-gray-600">
-            Dostupné: {effectiveAvailableQty} ks (celkovo {availableQty} ks,
-            v košíku {inCartQty} ks)
-          </p>
-        </div>
-      ) : (
-          !(isRetiazka(product) && !selectedLength) && (
-            <p className="mt-6 text-sm text-gray-600">
-              Tovar je vypredaný.
-            </p>
-          )
-      )}
 
       {/* Length dropdown (only for necklaces) */}
       {isRetiazka(product) && (
@@ -185,10 +141,9 @@ export default function ProductDetails({ product, onAddToCart }) {
                         `necklace-option-id--${product.handle}`,
                         length.option_id
                       );
-                      setQuantity(1);
                     }}
                   >
-                    {length.option_value}cm ({length.inventory_quantity} ks)
+                    {length.option_value}cm
                   </p>
                 ))}
               </div>
@@ -198,7 +153,7 @@ export default function ProductDetails({ product, onAddToCart }) {
       )}
 
       {/* Add to cart */}
-      {effectiveAvailableQty > 0 ? (
+      {availableQty > 0 && !isInCart ? (
         <button
           className="mt-6 bg-black text-white hover:bg-white hover:text-black border-2 transition-colors duration-300 px-4 py-3 w-full rounded cursor-pointer"
           onClick={handleAddToCart}
@@ -210,10 +165,9 @@ export default function ProductDetails({ product, onAddToCart }) {
           className="mt-6 bg-gray-200 text-white border-2 transition-colors duration-300 px-4 py-3 w-full rounded cursor-not-allowed"
           disabled
         >
-          Nedostupné
+          {isInCart ? "Už v košíku" : "Nedostupné"}
         </button>
       )}
-
     </div>
   );
 }

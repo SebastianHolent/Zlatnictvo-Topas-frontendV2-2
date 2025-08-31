@@ -25,8 +25,8 @@ export default function Main() {
         <h1>Naše Služby</h1>
       </div>
 
-      <div className="text-center font-medium max-w-4xl px-4">
-        <h2 className="text-xl sm:text-2xl">
+      <div className="text-center font-medium max-w-5xl px-4">
+        <h2 className="text-center text-xl sm:text-2xl md:text-3xl font-semibold mb-8">
           <span className="text-yellow-700 font-semibold">Výroba</span>, <span className="text-yellow-700 font-semibold">oprava</span> a <span className="text-yellow-700 font-semibold">predaj</span> šperkov a klenotov akýchkoľvek materiálov a najlepších kvalít, už v centre Prešova.
         </h2>
       </div>

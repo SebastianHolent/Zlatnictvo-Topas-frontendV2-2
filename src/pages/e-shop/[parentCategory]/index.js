@@ -33,8 +33,13 @@ export async function getStaticProps({ params }) {
 
     const { products } = await sdk.store.product.list({
         category_id: [categoryId],
-        fields: `*variants.calculated_price`,
+        fields: `*variants.calculated_price, +variants.inventory_quantity`,
     });
+    const productsWithStock = products.filter(product =>
+        product.variants?.some(variant =>
+          variant.manage_inventory === false || (variant.inventory_quantity || 0) > 0
+        )
+      );  
 
     const { product_categories: parentCategories } = await sdk.store.category.list({
         fields: "id,name,handle",
@@ -47,7 +52,7 @@ export async function getStaticProps({ params }) {
 
     return {
         props: {
-            products,
+            productsWithStock,
             category: product_categories[0],
             parentCategories: parentCategories ?? [], 
             allCategories: allCategories ?? []
@@ -56,11 +61,11 @@ export async function getStaticProps({ params }) {
     };
 }
 
-export default function Category({ products, category, parentCategories, allCategories}){
+export default function Category({ productsWithStock, category, parentCategories, allCategories}){
     return(
         <>
             <ShopNavigation parentCategories={parentCategories} allCategories={allCategories}/>
-            <ListProducts products={ products } category={ category }/>
+            <ListProducts products={ productsWithStock } category={ category }/>
         </>   
     )
 }

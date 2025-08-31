@@ -22,6 +22,7 @@ export default function Navbar() {
   return (
     <nav className="sticky top-0 z-100 w-full bg-white shadow-md transition-shadow text-black">
       <div className="flex items-center justify-between px-5 py-5 md:py-2">
+        <Link href="/">
         <div className="flex items-center space-x-2 z-51">
           <img
               src="/LOGO.webp"
@@ -32,13 +33,14 @@ export default function Navbar() {
             Zlatníctvo Topas
           </div>
         </div>
+        </Link>
 
         {/* PC Menu */}
         <div className="hidden lg:flex justify-center items-center space-x-6">
           <Link href="/" className="hover:text-yellow-600 transition duration-300">Domov</Link>
           <Link href="/e-shop" className="hover:text-yellow-600 transition duration-300">E-shop</Link>
           <Link href="/kontakt" className="hover:text-yellow-600 transition duration-300">Kontakt</Link>
-          <Link href="/na-mieru" className="hover:text-yellow-600 transition duration-300">Na Mieru</Link>
+          <Link href="/sluzby" className="hover:text-yellow-600 transition duration-300">Služby</Link>
           <Link href="/zoznam-zelani"> <Heart className={`h-6 hover:scale-110 transition duration-300}`}/></Link>
           <div className="relative">
             <Link href="/kosik">
@@ -83,7 +85,7 @@ export default function Navbar() {
               <Link onClick={toggleHamburger} href="/" className="hover:text-yellow-600 transition duration-300">Domov</Link>
               <Link onClick={toggleHamburger} href="/e-shop" className="hover:text-yellow-600 transition duration-300">E-shop</Link>
               <Link onClick={toggleHamburger} href="/kontakt" className="hover:text-yellow-600 transition duration-300">Kontakt</Link>
-              <Link onClick={toggleHamburger} href="/na-mieru" className="hover:text-yellow-600 transition duration-300">Na Mieru</Link>
+              <Link onClick={toggleHamburger} href="/sluzby" className="hover:text-yellow-600 transition duration-300">Na Mieru</Link>
             </div>
           )}
         </div>

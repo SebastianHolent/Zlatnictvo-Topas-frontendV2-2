@@ -6,8 +6,15 @@ export async function getServerSideProps() {
  try{
 
       const { products } = await sdk.store.product.list({
-        fields: `*variants.calculated_price, +variants.inventory_quantity`,
+        fields: `*variants.calculated_price,+variants.inventory_quantity`,
       });
+
+      const productsWithStock = products.filter(product =>
+        product.variants?.some(variant =>
+          variant.manage_inventory === false || (variant.inventory_quantity || 0) > 0
+        )
+      );
+      
       const { product_categories: parentCategories } = await sdk.store.category.list({
         fields: "id,name,handle",
         parent_category_id: "null",
@@ -17,7 +24,7 @@ export async function getServerSideProps() {
       });
 
       return {
-        props: { products, parentCategories: parentCategories ?? [], allCategories: allCategories ?? [] }
+        props: { productsWithStock, parentCategories: parentCategories ?? [], allCategories: allCategories ?? [] }
       }
  }
  catch(error){
@@ -33,11 +40,11 @@ export async function getServerSideProps() {
  }
 }
 
-export default function EshopHome({ products, parentCategories, allCategories }) {
+export default function EshopHome({ productsWithStock, parentCategories, allCategories }) {
   return(
     <main>
       <ShopNavigation parentCategories={parentCategories} allCategories={allCategories}/>
-      <ListProducts products={ products }/>
+      <ListProducts products={ productsWithStock }/>
     </main>
   )
 }
